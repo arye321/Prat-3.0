@@ -23,6 +23,7 @@
 <Script file="Editbox.lua"/>
 <Script file="Fading.lua"/>
 <Script file="Font.lua"/>
+<Script file="GuildMark.lua"/>
 <Script file="Filtering.lua"/>
 <Script file="Highlight.lua"/>
 <Script file="History.lua"/>
