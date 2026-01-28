@@ -48,6 +48,8 @@ Prat:AddModuleToLoad(function()
     ["Show the guild mark in all chat channels, not just guild chat."] = true,
     ["Exclude Guild Chat"] = true,
     ["Do not show the guild mark in guild and officer chat."] = true,
+    ["Exclude Self"] = true,
+    ["Do not show the guild mark on your own name."] = true,
   })
   --@end-debug@]==]
 
@@ -70,6 +72,8 @@ Prat:AddModuleToLoad(function()
         ["Show the guild mark in all chat channels, not just guild chat."] = true,
         ["Exclude Guild Chat"] = true,
         ["Do not show the guild mark in guild and officer chat."] = true,
+        ["Exclude Self"] = true,
+        ["Do not show the guild mark on your own name."] = true,
       }
     }
 
@@ -100,6 +104,7 @@ Prat:AddModuleToLoad(function()
       markColor = { r = 0.25, g = 1.0, b = 0.25 },
       allChannels = true,
       excludeGuildChat = false,
+      excludeSelf = true,
     }
   })
 
@@ -145,6 +150,14 @@ Prat:AddModuleToLoad(function()
         order = 140,
         get = function() return module.db.profile.excludeGuildChat end,
         set = function(info, v) module.db.profile.excludeGuildChat = v end,
+      },
+      excludeSelf = {
+        name = PL["Exclude Self"],
+        desc = PL["Do not show the guild mark on your own name."],
+        type = "toggle",
+        order = 150,
+        get = function() return module.db.profile.excludeSelf end,
+        set = function(info, v) module.db.profile.excludeSelf = v end,
       },
     }
   })
@@ -276,6 +289,11 @@ Prat:AddModuleToLoad(function()
 
     -- Check if the player is a guild member
     if self:IsGuildMember(playerName) then
+      -- Exclude self if option is enabled
+      if self.db.profile.excludeSelf and playerName == UnitName("player") then
+        return
+      end
+
       -- Add the guild mark before the player name
       message.PLAYER = self:GetColoredMark() .. message.PLAYER
     end
