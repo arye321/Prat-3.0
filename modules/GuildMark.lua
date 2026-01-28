@@ -46,6 +46,8 @@ Prat:AddModuleToLoad(function()
     ["Color of the guild mark symbol."] = true,
     ["Show in All Channels"] = true,
     ["Show the guild mark in all chat channels, not just guild chat."] = true,
+    ["Exclude Guild Chat"] = true,
+    ["Do not show the guild mark in guild and officer chat."] = true,
   })
   --@end-debug@]==]
 
@@ -66,6 +68,8 @@ Prat:AddModuleToLoad(function()
         ["Color of the guild mark symbol."] = true,
         ["Show in All Channels"] = true,
         ["Show the guild mark in all chat channels, not just guild chat."] = true,
+        ["Exclude Guild Chat"] = true,
+        ["Do not show the guild mark in guild and officer chat."] = true,
       }
     }
 
@@ -95,6 +99,7 @@ Prat:AddModuleToLoad(function()
       markSymbol = "(g)",
       markColor = { r = 0.25, g = 1.0, b = 0.25 },
       allChannels = true,
+      excludeGuildChat = false,
     }
   })
 
@@ -132,6 +137,14 @@ Prat:AddModuleToLoad(function()
         order = 130,
         get = function() return module.db.profile.allChannels end,
         set = function(info, v) module.db.profile.allChannels = v end,
+      },
+      excludeGuildChat = {
+        name = PL["Exclude Guild Chat"],
+        desc = PL["Do not show the guild mark in guild and officer chat."],
+        type = "toggle",
+        order = 140,
+        get = function() return module.db.profile.excludeGuildChat end,
+        set = function(info, v) module.db.profile.excludeGuildChat = v end,
       },
     }
   })
@@ -244,6 +257,11 @@ Prat:AddModuleToLoad(function()
 
     -- Check if we should process this event
     if not self.db.profile.allChannels and not GUILD_EVENTS[event] then
+      return
+    end
+
+    -- Exclude from guild chat if option is enabled
+    if self.db.profile.excludeGuildChat and (event == "CHAT_MSG_GUILD" or event == "CHAT_MSG_OFFICER") then
       return
     end
 
